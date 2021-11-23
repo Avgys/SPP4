@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TestsGeneratorLib
+namespace TestsGenerator.Lib
 {
     public class Class1
     {
