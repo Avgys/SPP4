@@ -14,21 +14,21 @@ namespace TestsGenerator.Lib.Template
     {
         private const string ActualVariableName = "actual";
         private const string ExpectedVariableName = "expected";
-        
+
         private readonly SyntaxToken _emptyLineToken;
         private readonly ExpressionStatementSyntax _failExpression;
 
         private readonly ISyntaxTreeGenerator _treeGenerator;
-        
-        public TemplateGenerator([NotNull]ISyntaxTreeGenerator treeGenerator)
+
+        public TemplateGenerator([NotNull] ISyntaxTreeGenerator treeGenerator)
         {
             _treeGenerator = treeGenerator;
-            
+
             _emptyLineToken = CreateEmptyLineToken();
             _failExpression = CreateFailExpression();
         }
 
-        public IEnumerable<KeyValuePair<string, string>> Generate([NotNull]string source)
+        public IEnumerable<KeyValuePair<string, string>> Generate([NotNull] string source)
         {
             var fileInfo = _treeGenerator.Generate(source);
             var usings = fileInfo.Usings.Select((usingStr) => UsingDirective(IdentifierName(usingStr))).ToList();
@@ -150,7 +150,7 @@ namespace TestsGenerator.Lib.Template
 
             variableName = isPrivate ? "_" + variableName : variableName;
             variableName = isUnderTest ? variableName + "UnderTest" : variableName;
-            
+
             return variableName;
         }
 
@@ -176,7 +176,7 @@ namespace TestsGenerator.Lib.Template
                                 Token(SyntaxKind.PrivateKeyword)
                             )
                         );
-                
+
                 fieldDeclarations.Add(fieldDeclaration.WithSemicolonToken(_emptyLineToken));
             }
 
@@ -194,10 +194,10 @@ namespace TestsGenerator.Lib.Template
             {
                 fields[^1] = fields[^1].WithSemicolonToken(_emptyLineToken);
             }
-            
+
             return fields;
         }
-        
+
         private FieldDeclarationSyntax CreateConstructorFieldDeclaration(string type, string name)
         {
             return FieldDeclaration(
@@ -225,22 +225,22 @@ namespace TestsGenerator.Lib.Template
                 )
             );
         }
-        
+
         private IEnumerable<FieldDeclarationSyntax> CreateConstructorFieldsDeclaration(ClassInfoNode classInfo)
         {
             var fields = classInfo.Constructor.Parameters
                 .Where(parameter => !parameter.Type.IsInterface)
                 .Select(parameter => CreateConstructorFieldDeclaration(parameter.Type.Typename, parameter.Name))
                 .ToList();
-            
+
             if (fields.Count > 0)
             {
                 fields[^1] = fields[^1].WithSemicolonToken(_emptyLineToken);
             }
-            
+
             return fields;
         }
-        
+
         private FieldDeclarationSyntax CreateInjectedFieldDeclaration(string type, string name)
         {
             return FieldDeclaration(
@@ -304,7 +304,7 @@ namespace TestsGenerator.Lib.Template
                                 .Concat(new List<ExpressionStatementSyntax> { CreateTestClassInitializeExpression(classInfo) })
                             )
                         );
-                
+
                 methodDeclarations.Add(methodDeclaration);
             }
 
@@ -336,7 +336,7 @@ namespace TestsGenerator.Lib.Template
             {
                 initializer = DefaultExpression(IdentifierName(parameterInfo.Type.Typename));
             }
-        
+
             return LocalDeclarationStatement(
                         VariableDeclaration(
                             IdentifierName(parameterInfo.Type.Typename)
@@ -353,7 +353,7 @@ namespace TestsGenerator.Lib.Template
                         )
                     );
         }
-        
+
         private ExpressionStatementSyntax[] CreateInjectedExpressions(ClassInfoNode classInfo)
         {
             return classInfo.Constructor.Parameters
@@ -361,7 +361,7 @@ namespace TestsGenerator.Lib.Template
                 .Select(CreateInjectedExpression)
                 .ToArray();
         }
-        
+
         private ExpressionStatementSyntax CreateInjectedExpression(ParameterInfoNode parameterInfo)
         {
             return ExpressionStatement(
@@ -383,7 +383,7 @@ namespace TestsGenerator.Lib.Template
                         )
                     );
         }
-        
+
         private ExpressionStatementSyntax CreateTestClassInitializeExpression(ClassInfoNode classInfo)
         {
             return ExpressionStatement(
@@ -491,7 +491,7 @@ namespace TestsGenerator.Lib.Template
                     .WithArgumentList(
                         ArgumentList(
                             SeparatedList<ArgumentSyntax>(
-                                new[] 
+                                new[]
                                 {
                                     CreateArgument(new ParameterInfoNode(ExpectedVariableName, methodReturnType)),
                                     Token(SyntaxKind.CommaToken),

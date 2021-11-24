@@ -4,10 +4,10 @@ using TestsGenerator.Lib;
 using TestsGenerator.Stream;
 
 namespace TestsGenerator
-{    
+{
     class Program
     {
-        static async void Main(string[] args)
+        static void Main(string[] args)
         {
             var readPaths = new List<string>()
             {
@@ -21,5 +21,5 @@ namespace TestsGenerator
             new NUnitTestsGenerator(config).GenerateClasses().Wait();
             Console.WriteLine("Generated");
         }
-    }    
+    }
 }
